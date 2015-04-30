@@ -67,7 +67,7 @@ public class SudokuGenetico {
         int random[][] = new int[9][9];
         for(int h=0;h<=8;h++){
             for(int i=0;i<=8;i++){
-                random[h][i] = sudoku[h][i];
+                random[h][i] = sudokux[h][i];
             }
         }
 
@@ -91,7 +91,8 @@ public class SudokuGenetico {
             for(int y = 0; y<=8; y++){
                 if (random[x][y]==0){
                         random[x][y] = fixos.get(rand.nextInt(fixos.size()));
-                        fixos.remove((Integer) sudoku[x][y]);
+                        Integer rd = (Integer) random[x][y];
+                        fixos.remove(rd);
                         }
                     }
                 }
@@ -300,14 +301,27 @@ public class SudokuGenetico {
     
     private static TreeMultimap crossover(TreeMultimap populacao){
         TreeMultimap<Integer, String> new_pop = TreeMultimap.create();
-        for(int x=0;x<=98;x+=2){
+        for(int x=0;x<=38;x+=2){
             String pai1x = (String) populacao.get(populacao.asMap().firstKey()).first();
             populacao.remove(populacao.asMap().firstKey(), pai1x);
-            String pai2x = (String) populacao.get(populacao.asMap().firstKey()).first();
-            populacao.remove(populacao.asMap().firstKey(), pai2x);
+            String pai2x = (String) populacao.get(populacao.asMap().lastKey()).last();
+            populacao.remove(populacao.asMap().lastKey(), pai2x);
             int[][] pai1 = convertback(pai1x);
             int[][] pai2 = convertback(pai2x);
-            for(int a=0;a<=2;a++){
+//            for (int a=0;a<=8;a++){
+//                for (int y=0; y<=8;y++){
+//                    System.out.printf(pai1[a][y]+" ");
+//                }
+//                System.out.println();
+//            }
+//            System.out.println("\n");
+//            for (int a=0;a<=8;a++){
+//                for (int y=0; y<=8;y++){
+//                    System.out.printf(pai2[a][y]+" ");
+//                }
+//                System.out.println();
+//            }
+            for(int a=0;a<=4;a++){
                 Random rand = new Random();
                 int cross = rand.nextInt(9);         
                 int[] temp = pai1[cross];
@@ -315,12 +329,33 @@ public class SudokuGenetico {
                 pai2[cross] = temp;
                 
             }
+            
             int conflito1 = conflitocoluna(pai1) + conflitobox(pai1);
             int conflito2 = conflitocoluna(pai2) + conflitobox(pai2);
             int[][] filho1 = mutacao(pai1);
             int[][] filho2 = mutacao(pai2);
             new_pop.put(conflito1, convert(filho1));
             new_pop.put(conflito2, convert(filho2));
+            
+            
+//            System.out.println("\n");
+//            for (int a=0;a<=8;a++){
+//                for (int y=0; y<=8;y++){
+//                    System.out.printf(filho1[a][y]+" ");
+//                }
+//                System.out.println();
+//            }
+//            System.out.println("\n");
+//            for (int a=0;a<=8;a++){
+//                for (int y=0; y<=8;y++){
+//                    System.out.printf(filho2[a][y]+" ");
+//                }
+//                System.out.println();
+//            }
+//            System.out.println("\n");
+//            
+//            Scanner entrada = new Scanner(System.in);
+//            String ent = entrada.nextLine();
                 
         }
         return new_pop;
@@ -337,12 +372,13 @@ public class SudokuGenetico {
                 {0,0,0,0,0,0,6,0,0},
                 {0,0,3,0,0,0,0,0,0},
                 {0,0,0,0,0,0,0,0,0}};
-        int jogo[][][] = new int[100][9][9];
-        for(int x=0;x<100;x++){
-            jogo[x] = random(sudoku);
+        int jogo[][][] = new int[40][9][9];
+        for(int x=0;x<40;x++){
+            jogo[x] = random(sudokux);
             int conf = conflitocoluna(jogo[x]) + conflitobox(jogo[x]);
             populacao.put(conf, convert(jogo[x]));
         }
+        
         for(int valor : populacao.keySet()){
             Iterator it = populacao.get(valor).iterator();
             while(it.hasNext()){
@@ -351,10 +387,10 @@ public class SudokuGenetico {
             }
         }
         for(int h=0;h<=999999;h++){
-            System.out.println("\n\n");
+            
             //System.out.println(populacao.size());
             populacao = crossover(populacao);
-            //.out.println(populacao.size());
+            //System.out.println(populacao.size());
             for(int valor : populacao.keySet()){
                 Iterator it = populacao.get(valor).iterator();
                 while(it.hasNext()){
@@ -362,6 +398,8 @@ public class SudokuGenetico {
                     it.next();
                 }
             }
+            System.out.println();
+            
             
         }
 
